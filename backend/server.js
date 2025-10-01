@@ -29,6 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/users', require('./routes/users'));
 
 const swaggerDocument = YAML.load('./docs/swagger.yaml');
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
