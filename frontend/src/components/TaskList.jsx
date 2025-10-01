@@ -49,7 +49,9 @@ export default function TaskList({ filters }) {
                 <td className="py-2 px-4 border">
                   {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}
                 </td>
-                <td className="py-2 px-4 border">{task.assignedUser || "-"}</td>
+                <td className="py-2 px-4 border">
+                  {task.assignedUser ? `${task.assignedUser.name}` : "-"}
+                </td>
                 <td className="py-2 px-4 border flex gap-2">
                   <Link
                     to={`/tasks/update/${task._id}`}
