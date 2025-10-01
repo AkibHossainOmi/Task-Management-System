@@ -25,7 +25,6 @@ export default function TaskForm({ onTaskCreated }) {
 
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded space-y-3 max-w-md">
-      <h2 className="font-bold text-lg">Create Task</h2>
       <input
         type="text"
         name="title"
@@ -55,7 +54,7 @@ export default function TaskForm({ onTaskCreated }) {
         className="border p-2 w-full"
       />
       <button type="submit" className="bg-blue-600 text-white p-2 w-full">
-        Create Task
+        Submit
       </button>
     </form>
   );

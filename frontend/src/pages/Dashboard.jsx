@@ -1,30 +1,50 @@
-import { useState } from "react";
-import TaskForm from "../components/TaskForm";
-import TaskFilter from "../components/TaskFilter";
-import TaskList from "../components/TaskList";
+import { Link } from "react-router-dom";
+import { PlusCircle, ListTodo, Filter } from "lucide-react";
 
 export default function Dashboard() {
-  const [filters, setFilters] = useState({});
-
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <header className="mb-6 text-center">
-        <h1 className="text-3xl font-semibold text-gray-800">Task Dashboard</h1>
-        <p className="text-gray-600">Create, manage, and filter your tasks</p>
-      </header>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <TaskForm onTaskCreated={() => setFilters({ ...filters })} />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link
+          to="/tasks/create"
+          className="block bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          <div className="flex items-center gap-3">
+            <PlusCircle className="w-6 h-6" />
+            <h2 className="text-xl font-semibold">Create Task</h2>
+          </div>
+          <p className="mt-2 text-sm text-gray-100">
+            Add a new task with details like title, description, due date, and assigned user.
+          </p>
+        </Link>
 
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <TaskFilter onFilter={(f) => setFilters(f)} />
-        </div>
+        <Link
+          to="/tasks"
+          className="block bg-emerald-600 text-white p-6 rounded-lg shadow hover:bg-emerald-700 transition"
+        >
+          <div className="flex items-center gap-3">
+            <ListTodo className="w-6 h-6" />
+            <h2 className="text-xl font-semibold">View Tasks</h2>
+          </div>
+          <p className="mt-2 text-sm text-gray-100">
+            Browse, update, or delete tasks in the system.
+          </p>
+        </Link>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <TaskList filters={filters} />
-        </div>
+        <Link
+          to="/tasks?filter=all"
+          className="block bg-indigo-600 text-white p-6 rounded-lg shadow hover:bg-indigo-700 transition"
+        >
+          <div className="flex items-center gap-3">
+            <Filter className="w-6 h-6" />
+            <h2 className="text-xl font-semibold">Filter & Manage</h2>
+          </div>
+          <p className="mt-2 text-sm text-gray-100">
+            Search and filter tasks by status or due date.
+          </p>
+        </Link>
       </div>
     </div>
   );
