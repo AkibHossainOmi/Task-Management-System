@@ -60,100 +60,101 @@ export default function TaskForm({ onTaskSaved, task }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 border rounded-lg shadow-md max-w-md mx-auto space-y-4 bg-white">
-        <h2 className="text-xl font-semibold text-gray-800">
-            {task ? "Update Task" : "Create Task"}
+    <div className="flex items-center justify-center min-h-screen">
+      <form onSubmit={handleSubmit} className="p-6 border rounded-lg shadow-md w-full max-w-md space-y-4 bg-white">
+        <h2 className="text-xl font-semibold text-gray-800 text-center">
+          {task ? "Update Task" : "Create Task"}
         </h2>
-      <input
-        type="text"
-        name="title"
-        placeholder="Title"
-        value={form.title}
-        onChange={(e) => setForm({ ...form, title: e.target.value })}
-        required
-        className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-      />
 
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
-        className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-      />
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          required
+          className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
+        />
 
-      <select
-        name="status"
-        value={form.status}
-        onChange={(e) => setForm({ ...form, status: e.target.value })}
-        className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-      >
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={form.description}
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
+        />
 
-      <Combobox value={form.assignedUser} onChange={(user) => setForm({ ...form, assignedUser: user })}>
-        <div className="relative">
-          <div className="relative w-full cursor-default overflow-hidden rounded border bg-white text-left focus:outline-none focus:ring focus:ring-blue-200">
-            <Combobox.Input
-              className="w-full border-none p-2 focus:ring-0"
-              displayValue={(user) => (user?.name && user?.email ? `${user.name} (${user.email})` : "")}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Select User"
-            />
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
-            </Combobox.Button>
+        <select
+          name="status"
+          value={form.status}
+          onChange={(e) => setForm({ ...form, status: e.target.value })}
+          className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
+        >
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <Combobox value={form.assignedUser} onChange={(user) => setForm({ ...form, assignedUser: user })}>
+          <div className="relative">
+            <div className="relative w-full cursor-default overflow-hidden rounded border bg-white text-left focus:outline-none focus:ring focus:ring-blue-200">
+              <Combobox.Input
+                className="w-full border-none p-2 focus:ring-0"
+                displayValue={(user) => (user?.name && user?.email ? `${user.name} (${user.email})` : "")}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Select User"
+              />
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
+              </Combobox.Button>
+            </div>
+
+            <Transition
+              as="div"
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              className="absolute mt-1 max-h-60 w-full overflow-auto rounded bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10"
+            >
+              {filteredUsers.length === 0 && (
+                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                  Nothing found.
+                </div>
+              )}
+              {filteredUsers.map((user) => (
+                <Combobox.Option
+                  key={user._id}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 px-4 ${active ? "bg-blue-600 text-white" : "text-gray-900"}`
+                  }
+                  value={user}
+                >
+                  {({ selected }) => (
+                    <>
+                      <span className={`block truncate ${selected ? "font-semibold" : "font-normal"}`}>
+                        {user.name} ({user.email})
+                      </span>
+                      {selected && <CheckIcon className="absolute right-2 top-2 h-5 w-5" />}
+                    </>
+                  )}
+                </Combobox.Option>
+              ))}
+            </Transition>
           </div>
+        </Combobox>
 
-          <Transition
-            as="div"
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            className="absolute mt-1 max-h-60 w-full overflow-auto rounded bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10"
-          >
-            {filteredUsers.length === 0 && (
-              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                Nothing found.
-              </div>
-            )}
-            {filteredUsers.map((user) => (
-              <Combobox.Option
-                key={user._id}
-                className={({ active }) =>
-                  `relative cursor-default select-none py-2 px-4 ${
-                    active ? "bg-blue-600 text-white" : "text-gray-900"
-                  }`
-                }
-                value={user}
-              >
-                {({ selected }) => (
-                  <>
-                    <span className={`block truncate ${selected ? "font-semibold" : "font-normal"}`}>
-                      {user.name} ({user.email})
-                    </span>
-                    {selected && <CheckIcon className="absolute right-2 top-2 h-5 w-5" />}
-                  </>
-                )}
-              </Combobox.Option>
-            ))}
-          </Transition>
-        </div>
-      </Combobox>
+        <input
+          type="date"
+          name="dueDate"
+          value={form.dueDate}
+          onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+          className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
+        />
 
-      <input
-        type="date"
-        name="dueDate"
-        value={form.dueDate}
-        onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-        className="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-      />
-
-      <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white p-2 w-full rounded transition">
-        {task ? "Update Task" : "Create Task"}
-      </button>
-    </form>
+        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white p-2 w-full rounded transition">
+          {task ? "Update Task" : "Create Task"}
+        </button>
+      </form>
+    </div>
   );
 }

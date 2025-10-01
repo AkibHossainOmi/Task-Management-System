@@ -28,7 +28,7 @@ export default function TaskUpdate() {
   if (!task) return <p className="text-center mt-10 text-red-500">Task not found.</p>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
+    <div className="max-w-2xl mx-auto p-6">
       <TaskForm task={task} onTaskSaved={() => navigate("/tasks")} />
     </div>
   );
