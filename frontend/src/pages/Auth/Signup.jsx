@@ -1,9 +1,10 @@
-import { useState } from "react";
-import api from "../api/api";
+import { useState, useEffect } from "react";
+import api from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [message, setMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,12 +13,22 @@ export default function Signup() {
     e.preventDefault();
     try {
       await api.post("/auth/register", form);
-      alert("Signup successful!");
-      navigate("/login");
+      setMessage({ type: "success", text: "Signup successful!" });
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      alert(err.response?.data?.message || "Error signing up");
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Error signing up",
+      });
     }
   };
+
+  useEffect(() => {
+    if (message?.type === "error") {
+      const timer = setTimeout(() => setMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -26,6 +37,18 @@ export default function Signup() {
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-6"
       >
         <h1 className="text-2xl font-semibold text-gray-800 text-center">Sign Up</h1>
+
+        {message && (
+          <div
+            className={`p-2 rounded text-sm ${
+              message.type === "error"
+                ? "bg-red-100 text-red-800"
+                : "bg-green-100 text-green-800"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
 
         <div className="space-y-4">
           <div>

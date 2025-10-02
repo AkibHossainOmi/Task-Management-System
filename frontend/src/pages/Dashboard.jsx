@@ -100,7 +100,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
@@ -117,7 +116,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         {STATS_CONFIG.map(stat => {
           const Icon = stat.icon;
@@ -135,7 +133,6 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Quick Actions */}
       <div className="flex flex-col sm:flex-row gap-6 mb-8">
         <Link to="/tasks/create" className="flex-1 bg-white p-6 rounded-xl shadow hover:shadow-md transition">
           <div className="flex items-center gap-4 mb-2">
@@ -153,7 +150,6 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Task Status</h2>
@@ -194,7 +190,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Tasks */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-900 text-lg">Recent Tasks</h2>

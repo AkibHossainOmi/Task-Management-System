@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import TaskForm from "../../components/TaskForm";
+import TaskForm from "../../components/Task/TaskForm";
 import api from "../../api/api";
 
 export default function TaskUpdate() {
@@ -16,7 +16,6 @@ export default function TaskUpdate() {
         setTask(res.data);
       } catch (err) {
         console.error("Error fetching task", err);
-        alert("Failed to fetch task");
       } finally {
         setLoading(false);
       }
