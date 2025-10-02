@@ -164,43 +164,46 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Task Status</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={60}
-                labelLine={false}
-                label={({ name, percent, value }) =>
-                  value > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : null
-                }
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          {stats.total === 0 ? (
+            <p className="text-gray-500 text-sm text-center py-16">No tasks available</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={60}
+                  labelLine={false}
+                  label={({ name, percent, value }) => value > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : null}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Tasks Per User</h2>
-          <ResponsiveContainer width="100%" height={200} barCategoryGap="15%">
-            <BarChart
-              data={userStats}
-              margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
-            >
-              <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip />
-              <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
-            </BarChart>
-          </ResponsiveContainer>
+          {userStats.length === 0 ? (
+            <p className="text-gray-500 text-sm text-center py-16">No user assignments yet</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={200} barCategoryGap="15%">
+              <BarChart data={userStats} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+                <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
@@ -208,28 +211,32 @@ export default function Dashboard() {
         <div className="p-3 sm:p-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-900 text-sm sm:text-lg">Recent Tasks</h2>
         </div>
-        <table className="w-full text-left text-gray-700 text-xs sm:text-sm">
-          <thead className="bg-gray-50 text-gray-500 uppercase">
-            <tr>
-              <th className="py-2 px-3">Title</th>
-              <th className="py-2 px-3">Status</th>
-              <th className="py-2 px-3">Assigned User</th>
-              <th className="py-2 px-3">Due Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {recentTasks.map(task => (
-              <tr key={task._id} className="hover:bg-gray-50">
-                <td className="py-2 px-3">{task.title}</td>
-                <td className="py-2 px-3">
-                  <span className={getStatusBadgeClass(task.status)}>{task.status}</span>
-                </td>
-                <td className="py-2 px-3">{task.assignedUser?.name || "Unassigned"}</td>
-                <td className="py-2 px-3">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
+        {recentTasks.length === 0 ? (
+          <p className="text-gray-500 text-sm text-center py-6">No recent tasks</p>
+        ) : (
+          <table className="w-full text-left text-gray-700 text-xs sm:text-sm">
+            <thead className="bg-gray-50 text-gray-500 uppercase">
+              <tr>
+                <th className="py-2 px-3">Title</th>
+                <th className="py-2 px-3">Status</th>
+                <th className="py-2 px-3">Assigned User</th>
+                <th className="py-2 px-3">Due Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {recentTasks.map(task => (
+                <tr key={task._id} className="hover:bg-gray-50">
+                  <td className="py-2 px-3">{task.title}</td>
+                  <td className="py-2 px-3">
+                    <span className={getStatusBadgeClass(task.status)}>{task.status}</span>
+                  </td>
+                  <td className="py-2 px-3">{task.assignedUser?.name || "Unassigned"}</td>
+                  <td className="py-2 px-3">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
