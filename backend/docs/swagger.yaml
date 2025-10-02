@@ -5,6 +5,7 @@ info:
   description: API for managing tasks with JWT authentication
 servers:
   - url: http://localhost:8000/api
+
 paths:
   /auth/register:
     post:
@@ -27,6 +28,7 @@ paths:
       responses:
         '200':
           description: Returns JWT token
+
   /auth/login:
     post:
       summary: Login user
@@ -46,6 +48,7 @@ paths:
       responses:
         '200':
           description: Returns JWT token
+
   /tasks:
     get:
       summary: Get all tasks
@@ -70,6 +73,7 @@ paths:
       responses:
         '200':
           description: List of tasks
+
     post:
       summary: Create a new task
       tags:
@@ -98,6 +102,7 @@ paths:
       responses:
         '200':
           description: Task created
+
   /tasks/{id}:
     get:
       summary: Get a task by ID
@@ -114,6 +119,7 @@ paths:
       responses:
         '200':
           description: Returns a task
+
     put:
       summary: Update a task by ID
       tags:
@@ -148,6 +154,7 @@ paths:
       responses:
         '200':
           description: Task updated
+
     delete:
       summary: Delete a task by ID
       tags:
@@ -163,6 +170,7 @@ paths:
       responses:
         '200':
           description: Task deleted
+
   /users:
     get:
       summary: Get all users
@@ -186,33 +194,35 @@ paths:
                       type: string
                     email:
                       type: string
-    /users/{id}:
-      get:
-        summary: Get a single user by ID
-        tags:
-          - Users
-        security:
-          - bearerAuth: []
-        parameters:
-          - in: path
-            name: id
-            required: true
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Returns a user
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    _id:
-                      type: string
-                    name:
-                      type: string
-                    email:
-                      type: string
+
+  /users/{id}:
+    get:
+      summary: Get a single user by ID
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+
 components:
   securitySchemes:
     bearerAuth:
