@@ -39,7 +39,9 @@ export default function Dashboard() {
         const pending = tasks.filter(t => t.status === "Pending").length;
         const inProgress = tasks.filter(t => t.status === "In Progress").length;
         const completed = tasks.filter(t => t.status === "Completed").length;
-        const overdue = tasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== "Completed").length;
+        const overdue = tasks.filter(
+          t => t.dueDate && new Date(t.dueDate) < now && t.status !== "Completed"
+        ).length;
 
         setStats({ total: tasks.length, pending, inProgress, completed, overdue });
         setRecentTasks(tasks.slice(-5).reverse());
@@ -51,7 +53,6 @@ export default function Dashboard() {
           userMap[name]++;
         });
         setUserStats(Object.entries(userMap).map(([name, value]) => ({ name, value })));
-
       } catch (err) {
         console.error("Error fetching tasks", err);
       } finally {
@@ -78,12 +79,16 @@ export default function Dashboard() {
   ];
 
   const getStatusBadgeClass = (status) => {
-    const base = "px-3 py-1 rounded-full text-xs font-medium";
+    const base = "px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap";
     switch (status) {
-      case "Completed": return `${base} bg-green-100 text-green-800`;
-      case "In Progress": return `${base} bg-blue-100 text-blue-800`;
-      case "Pending": return `${base} bg-yellow-100 text-yellow-800`;
-      default: return `${base} bg-gray-100 text-gray-800`;
+      case "Completed":
+        return `${base} bg-green-100 text-green-800`;
+      case "In Progress":
+        return `${base} bg-blue-100 text-blue-800`;
+      case "Pending":
+        return `${base} bg-yellow-100 text-yellow-800`;
+      default:
+        return `${base} bg-gray-100 text-gray-800`;
     }
   };
 
@@ -99,24 +104,24 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+    <div className="min-h-screen p-4 sm:p-6 bg-gray-50">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
-          <p className="text-gray-600">Overview of your tasks</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
+          <p className="text-gray-600 text-sm sm:text-base">Overview of your tasks</p>
         </div>
-        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm mt-4 sm:mt-0">
-          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-gray-600" />
+        <div className="flex items-center gap-3 bg-white px-3 sm:px-4 py-2 rounded-xl shadow-sm mt-4 sm:mt-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
           </div>
           <div>
-            <p className="text-sm text-gray-500">Welcome back</p>
-            <p className="font-semibold text-gray-900">{user.name}</p>
+            <p className="text-xs sm:text-sm text-gray-500">Welcome back</p>
+            <p className="font-semibold text-gray-900 text-sm sm:text-base">{user.name}</p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {STATS_CONFIG.map(stat => {
           const Icon = stat.icon;
           return (
@@ -124,98 +129,107 @@ export default function Dashboard() {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-700">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats[stat.key]}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats[stat.key]}</p>
                 </div>
-                <Icon className="w-6 h-6 text-gray-500" />
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-6 mb-8">
-        <Link to="/tasks/create" className="flex-1 bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-          <div className="flex items-center gap-4 mb-2">
-            <PlusCircle className="w-6 h-6 text-gray-700" />
-            <h2 className="font-semibold text-gray-900 text-lg">Create Task</h2>
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <Link
+          to="/tasks/create"
+          className="flex-1 bg-white p-4 sm:p-6 rounded-xl shadow hover:shadow-md transition"
+        >
+          <div className="flex items-center gap-3 sm:gap-4 mb-1 sm:mb-2">
+            <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+            <h2 className="font-semibold text-gray-900 text-sm sm:text-lg">Create Task</h2>
           </div>
-          <p className="text-gray-600 text-sm">Add a new task quickly.</p>
+          <p className="text-gray-600 text-xs sm:text-sm">Add a new task quickly.</p>
         </Link>
-        <Link to="/tasks" className="flex-1 bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-          <div className="flex items-center gap-4 mb-2">
-            <ListTodo className="w-6 h-6 text-gray-700" />
-            <h2 className="font-semibold text-gray-900 text-lg">Manage Tasks</h2>
+        <Link
+          to="/tasks"
+          className="flex-1 bg-white p-4 sm:p-6 rounded-xl shadow hover:shadow-md transition"
+        >
+          <div className="flex items-center gap-3 sm:gap-4 mb-1 sm:mb-2">
+            <ListTodo className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+            <h2 className="font-semibold text-gray-900 text-sm sm:text-lg">Manage Tasks</h2>
           </div>
-          <p className="text-gray-600 text-sm">Browse, update, delete, or filter tasks.</p>
+          <p className="text-gray-600 text-xs sm:text-sm">Browse, update, delete, or filter tasks.</p>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Task Status</h2>
-          <ResponsiveContainer width="100%" height={250}>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Task Status</h2>
+          <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-                <Pie
+              <Pie
                 data={pieData}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={80}
+                outerRadius={60}
                 labelLine={false}
                 label={({ name, percent, value }) =>
-                    value > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : null
+                  value > 0 ? `${name}: ${(percent * 100).toFixed(0)}%` : null
                 }
-                >
+              >
                 {pieData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
-                </Pie>
+              </Pie>
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tasks Per User</h2>
-          <ResponsiveContainer width="100%" height={250} barCategoryGap="20%">
-            <BarChart data={userStats} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Tasks Per User</h2>
+          <ResponsiveContainer width="100%" height={200} barCategoryGap="15%">
+            <BarChart
+              data={userStats}
+              margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
+            >
               <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
               <Tooltip />
-              <Bar dataKey="value" fill="#3b82f6" radius={[4,4,0,0]} barSize={30} />
+              <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-900 text-lg">Recent Tasks</h2>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <div className="p-3 sm:p-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-900 text-sm sm:text-lg">Recent Tasks</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-gray-700">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-              <tr>
-                <th className="py-3 px-4">Title</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Assigned User</th>
-                <th className="py-3 px-4">Due Date</th>
+        <table className="w-full text-left text-gray-700 text-xs sm:text-sm">
+          <thead className="bg-gray-50 text-gray-500 uppercase">
+            <tr>
+              <th className="py-2 px-3">Title</th>
+              <th className="py-2 px-3">Status</th>
+              <th className="py-2 px-3">Assigned User</th>
+              <th className="py-2 px-3">Due Date</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {recentTasks.map(task => (
+              <tr key={task._id} className="hover:bg-gray-50">
+                <td className="py-2 px-3">{task.title}</td>
+                <td className="py-2 px-3">
+                  <span className={getStatusBadgeClass(task.status)}>{task.status}</span>
+                </td>
+                <td className="py-2 px-3">{task.assignedUser?.name || "Unassigned"}</td>
+                <td className="py-2 px-3">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {recentTasks.map(task => (
-                <tr key={task._id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4">{task.title}</td>
-                  <td className="py-3 px-4"><span className={getStatusBadgeClass(task.status)}>{task.status}</span></td>
-                  <td className="py-3 px-4">{task.assignedUser?.name || "Unassigned"}</td>
-                  <td className="py-3 px-4">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
