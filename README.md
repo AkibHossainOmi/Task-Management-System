@@ -1,6 +1,8 @@
-# Task Management MERN App
+# Assessment
 
-A full-stack Task Management system built with **Express, React, Node.js, MongoDB (MERN)** with JWT authentication.
+# Task Management System
+
+A full-stack Task Management System built with **Express, React, Node.js, MongoDB (MERN)** with JWT authentication.
 
 ## Prerequisites
 
@@ -30,6 +32,7 @@ docker compose up -d --build
 #### 3. Access the application
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
+- **Swagger Doc**: http://localhost:8000/api/docs
 - **MongoDB**: mongodb://localhost:27017/
 
 #### 4. Useful Docker Commands
@@ -97,7 +100,7 @@ npm install
 ##### Environment Configuration
 Create `frontend/.env`:
 ```env
-REACT_APP_API_URL=http://localhost:8000/api
+BASE_API_URL=http://localhost:8000/api
 ```
 
 ##### Start the React development server
@@ -108,6 +111,7 @@ npm start
 #### 4. Access the application
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
+- **Swagger Doc**: http://localhost:8000/api/docs
 
 ---
 
