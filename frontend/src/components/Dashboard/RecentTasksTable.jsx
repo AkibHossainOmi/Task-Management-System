@@ -24,7 +24,17 @@ export default function RecentTasksTable({ recentTasks, getStatusBadgeClass }) {
                   <span className={getStatusBadgeClass(task.status)}>{task.status}</span>
                 </td>
                 <td className="py-2 px-3">{task.assignedUser?.name || "Unassigned"}</td>
-                <td className="py-2 px-3">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
+                <td className="py-2 px-3">
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "-"}
+                </td>
               </tr>
             ))}
           </tbody>

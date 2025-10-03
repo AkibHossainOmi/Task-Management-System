@@ -46,8 +46,16 @@ export default function TaskList({ filters }) {
               <tr key={task._id} className="hover:bg-gray-50">
                 <td className="py-2 px-4 border">{task.title}</td>
                 <td className="py-2 px-4 border">{task.status}</td>
-                <td className="py-2 px-4 border">
-                  {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}
+                <td className="py-2 px-3">
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "-"}
                 </td>
                 <td className="py-2 px-4 border">
                   {task.assignedUser ? `${task.assignedUser.name}` : "-"}

@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import api from "../../api/api";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid";
+import DateTimePicker from "../UI/DateTimePicker";
 
 export default function TaskForm({ onTaskSaved, task }) {
   const [form, setForm] = useState({
     title: task?.title || "",
     description: task?.description || "",
     status: task?.status || "Pending",
-    dueDate: task?.dueDate ? task.dueDate.slice(0, 10) : "",
+    dueDate: task?.dueDate ? task.dueDate.slice(0, 16) : "",
     assignedUser: null,
   });
 
@@ -164,7 +165,7 @@ export default function TaskForm({ onTaskSaved, task }) {
           </div>
         </Combobox>
 
-        <input
+        <DateTimePicker
           type="date"
           name="dueDate"
           value={form.dueDate}
