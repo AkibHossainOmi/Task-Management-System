@@ -4,7 +4,6 @@ import api from "../api/api";
 import DashboardStats from "../components/Dashboard/DashboardStats";
 import DashboardActions from "../components/Dashboard/DashboardActions";
 import DashboardPieChart from "../components/Dashboard/DashboardPieChart";
-import DashboardBarChart from "../components/Dashboard/DashboardBarChart";
 import RecentTasksTable from "../components/Dashboard/RecentTasksTable";
 
 export default function Dashboard() {
@@ -16,9 +15,8 @@ export default function Dashboard() {
     overdue: 0,
   });
   const [recentTasks, setRecentTasks] = useState([]);
-  const [userStats, setUserStats] = useState([]);
-  const [user] = useState({ name: "User" });
   const [loading, setLoading] = useState(true);
+  const [user] = useState({ name: "User" });
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -37,14 +35,6 @@ export default function Dashboard() {
 
         setStats({ total: tasks.length, pending, inProgress, completed, overdue });
         setRecentTasks(tasks.slice(-5).reverse());
-
-        const userMap = {};
-        tasks.forEach(t => {
-          const name = t.assignedUser?.name || "Unassigned";
-          if (!userMap[name]) userMap[name] = 0;
-          userMap[name]++;
-        });
-        setUserStats(Object.entries(userMap).map(([name, value]) => ({ name, value })));
       } catch (err) {
         console.error("Error fetching tasks", err);
       } finally {
@@ -101,9 +91,8 @@ export default function Dashboard() {
 
       <DashboardActions />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <DashboardPieChart stats={stats} />
-        <DashboardBarChart userStats={userStats} />
       </div>
 
       <RecentTasksTable recentTasks={recentTasks} getStatusBadgeClass={getStatusBadgeClass} />
