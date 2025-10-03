@@ -9,7 +9,11 @@ export default function TaskForm({ onTaskSaved, task }) {
     title: task?.title || "",
     description: task?.description || "",
     status: task?.status || "Pending",
-    dueDate: task?.dueDate ? task.dueDate.slice(0, 16) : "",
+    dueDate: task?.dueDate
+              ? new Date(new Date(task.dueDate).getTime() - new Date(task.dueDate).getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .slice(0, 16)
+              : "",
     assignedUser: null,
   });
 
