@@ -100,7 +100,7 @@ npm install
 ##### Environment Configuration
 Create `frontend/.env`:
 ```env
-BASE_API_URL=http://localhost:8000/api
+REACT_APP_API_URL=http://localhost:8000/api
 ```
 
 ##### Start the React development server
