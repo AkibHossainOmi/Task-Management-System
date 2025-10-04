@@ -21,52 +21,53 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [user] = useState({ name: "User" });
 
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/tasks");
+      const allTasks = res.data;
+      setTasks(allTasks);
+
+      const now = new Date();
+      const pending = allTasks.filter(t => t.status === "Pending").length;
+      const inProgress = allTasks.filter(t => t.status === "In Progress").length;
+      const completed = allTasks.filter(t => t.status === "Completed").length;
+      const overdue = allTasks.filter(
+        t => t.dueDate && new Date(t.dueDate) < now && t.status !== "Completed"
+      ).length;
+
+      const upcoming = [...allTasks]
+        .filter(t => t.dueDate && t.status !== "Completed")
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+        .slice(0, 5);
+
+      const history = {};
+      allTasks.forEach(t => {
+        if (t.status === "Completed" && t.updatedAt) {
+          const date = new Date(t.updatedAt).toISOString().split("T")[0];
+          history[date] = (history[date] || 0) + 1;
+        }
+      });
+
+      const last7Days = [...Array(7)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        const key = d.toISOString().split("T")[0];
+        return { date: key, completed: history[key] || 0 };
+      });
+
+      setStats({ total: allTasks.length, pending, inProgress, completed, overdue });
+      setUpcomingTasks(upcoming);
+      setTaskHistory(last7Days);
+    } catch (err) {
+      console.error("Error fetching tasks", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const res = await api.get("/tasks");
-        const allTasks = res.data;
-        setTasks(allTasks);
-
-        const now = new Date();
-        const pending = allTasks.filter(t => t.status === "Pending").length;
-        const inProgress = allTasks.filter(t => t.status === "In Progress").length;
-        const completed = allTasks.filter(t => t.status === "Completed").length;
-        const overdue = allTasks.filter(
-          t => t.dueDate && new Date(t.dueDate) < now && t.status !== "Completed"
-        ).length;
-
-        const upcoming = [...allTasks]
-          .filter(t => t.dueDate && t.status !== "Completed")
-          .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-          .slice(0, 5);
-
-        const history = {};
-        allTasks.forEach(t => {
-          if (t.status === "Completed" && t.updatedAt) {
-            const date = new Date(t.updatedAt).toISOString().split("T")[0];
-            history[date] = (history[date] || 0) + 1;
-          }
-        });
-
-        const last7Days = [...Array(7)].map((_, i) => {
-          const d = new Date();
-          d.setDate(d.getDate() - (6 - i));
-          const key = d.toISOString().split("T")[0];
-          return { date: key, completed: history[key] || 0 };
-        });
-
-        setStats({ total: allTasks.length, pending, inProgress, completed, overdue });
-        setUpcomingTasks(upcoming);
-        setTaskHistory(last7Days);
-      } catch (err) {
-        console.error("Error fetching tasks", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
   const getStatusBadgeClass = status => {
@@ -112,9 +113,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <DashboardStats stats={stats} />
+      <DashboardActions refreshTasks={fetchDashboardData} />
 
-      <DashboardActions />
+      <DashboardStats stats={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <UpcomingTasksTable tasks={upcomingTasks} getStatusBadgeClass={getStatusBadgeClass} />

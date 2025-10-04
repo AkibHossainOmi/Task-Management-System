@@ -3,8 +3,6 @@ import Navbar from "./components/Layout/Navbar";
 import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Dashboard";
-import TaskCreate from "./pages/Task/TaskCreate";
-import TaskUpdate from "./pages/Task/TaskUpdate";
 import TaskListPage from "./pages/Task/TaskList";
 import ProtectedRoute from "./contexts/ProtectedRoute";
 import PublicRoute from "./contexts/PublicRoute";
@@ -49,22 +47,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TaskListPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/tasks/create"
-                element={
-                  <ProtectedRoute>
-                    <TaskCreate />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/tasks/update/:id"
-                element={
-                  <ProtectedRoute>
-                    <TaskUpdate />
                   </ProtectedRoute>
                 }
               />
