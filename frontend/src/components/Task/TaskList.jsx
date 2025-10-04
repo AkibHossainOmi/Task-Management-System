@@ -8,9 +8,11 @@ export default function TaskList({ filters, refreshTasks }) {
   const [editingTask, setEditingTask] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await api.get("/tasks", {
         params: { ...filters, page, limit: 10 },
@@ -19,22 +21,38 @@ export default function TaskList({ filters, refreshTasks }) {
       setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Error fetching tasks:", err);
+    } finally {
+      setLoading(false);
     }
   }, [filters, page]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
+    setLoading(true);
     try {
       await api.delete(`/tasks/${id}`);
       fetchTasks();
     } catch (err) {
       console.error("Error deleting task:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[200px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-400 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading tasks...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,7 +68,7 @@ export default function TaskList({ filters, refreshTasks }) {
         />
       )}
 
-      <div className="overflow-x-auto w-full">
+      <div className="overflow-x-auto w-full relative">
         <table className="min-w-full border rounded-lg shadow text-sm sm:text-base">
           <thead className="bg-gray-100 text-left">
             <tr>
