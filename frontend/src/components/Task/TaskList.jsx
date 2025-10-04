@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import TaskForm from "../Task/TaskForm";
 
 export default function TaskList({ filters, refreshTasks }) {
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
+  const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -57,7 +59,14 @@ export default function TaskList({ filters, refreshTasks }) {
             {tasks.length > 0 ? (
               tasks.map((task) => (
                 <tr key={task._id} className="hover:bg-gray-50">
-                  <td className="py-2 px-3 sm:px-4 border">{task.title}</td>
+                  <td className="py-2 px-3 sm:px-4 border">
+                    <button
+                      onClick={() => navigate(`/tasks/${task._id}`)}
+                      className="text-blue-600 hover:underline font-medium"
+                    >
+                      {task.title}
+                    </button>
+                  </td>
                   <td className="py-2 px-3 sm:px-4 border">{task.status}</td>
                   <td className="py-2 px-3 sm:px-4 border">
                     {task.dueDate

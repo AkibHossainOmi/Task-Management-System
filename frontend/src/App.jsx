@@ -3,11 +3,12 @@ import Navbar from "./components/Layout/Navbar";
 import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Dashboard";
-import TaskListPage from "./pages/Task/TaskList";
+import TaskListPage from "./pages/Task/TaskListPage";
 import ProtectedRoute from "./contexts/ProtectedRoute";
 import PublicRoute from "./contexts/PublicRoute";
 import { AuthProvider } from "./contexts/authContext";
 import Footer from "./components/Layout/Footer";
+import Task from "./pages/Task/TaskPage";
 
 function App() {
   return (
@@ -47,6 +48,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TaskListPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/tasks/:id"
+                element={
+                  <ProtectedRoute>
+                    <Task />
                   </ProtectedRoute>
                 }
               />
