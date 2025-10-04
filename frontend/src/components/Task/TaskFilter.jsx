@@ -2,10 +2,16 @@ import { useState } from "react";
 import DateTimePicker from "../UI/DateTimePicker";
 
 export default function TaskFilter({ onFilter }) {
-  const [filters, setFilters] = useState({ status: "", dueDate: "", search: "" });
+  const [filters, setFilters] = useState({
+    status: "",
+    search: "",
+    startDate: "",
+    endDate: "",
+  });
 
   const handleChange = (e) => {
-    const newFilters = { ...filters, [e.target.name]: e.target.value };
+    const { name, value } = e.target;
+    const newFilters = { ...filters, [name]: value };
     setFilters(newFilters);
     if (onFilter) onFilter(newFilters);
   };
@@ -22,6 +28,7 @@ export default function TaskFilter({ onFilter }) {
           onChange={handleChange}
           className="border p-2 flex-1 w-full"
         />
+
         <select
           name="status"
           value={filters.status}
@@ -33,10 +40,20 @@ export default function TaskFilter({ onFilter }) {
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
+
         <DateTimePicker
-          name="dueDate"
-          value={filters.dueDate}
+          name="startDate"
+          value={filters.startDate}
           onChange={handleChange}
+          placeholder="Start Date"
+          className="flex-1 w-full"
+        />
+
+        <DateTimePicker
+          name="endDate"
+          value={filters.endDate}
+          onChange={handleChange}
+          placeholder="End Date"
           className="flex-1 w-full"
         />
       </div>

@@ -16,14 +16,30 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   try {
-    const { status, search, dueDate } = req.query;
+    const { status, search, startDate, endDate } = req.query;
     const q = {};
+
     if (status) q.status = status;
     if (search) q.title = { $regex: search, $options: 'i' };
-    if (dueDate) q.dueDate = { $lte: new Date(dueDate) };
-    const tasks = await Task.find(q).populate('assignedUser', 'name email').sort({ createdAt: -1 });
+
+    if (startDate || endDate) {
+      q.dueDate = {};
+      if (startDate) q.dueDate.$gte = new Date(startDate);
+      if (endDate) q.dueDate.$lte = new Date(endDate);
+    }
+
+    const tasks = await Task.find(q)
+      .populate('assignedUser', 'name email')
+      .sort({ 
+        dueDate: -1,
+        createdAt: -1
+      });
+
     res.json(tasks);
-  } catch (err) { res.status(500).send('Server error'); }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
 });
 
 router.get('/:id', auth, async (req, res) => {
