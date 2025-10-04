@@ -3,8 +3,9 @@ import { User } from "lucide-react";
 import api from "../api/api";
 import DashboardStats from "../components/Dashboard/DashboardStats";
 import DashboardActions from "../components/Dashboard/DashboardActions";
-import DashboardPieChart from "../components/Dashboard/DashboardPieChart";
-import RecentTasksTable from "../components/Dashboard/RecentTasksTable";
+import DashboardCalendar from "../components/Dashboard/DashboardCalender";
+import ProductivityTrend from "../components/Dashboard/ProductivityTrend";
+import UpcomingTasksTable from "../components/Dashboard/UpcomingTasksTable";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -14,7 +15,9 @@ export default function Dashboard() {
     completed: 0,
     overdue: 0,
   });
-  const [recentTasks, setRecentTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [upcomingTasks, setUpcomingTasks] = useState([]);
+  const [taskHistory, setTaskHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user] = useState({ name: "User" });
 
@@ -23,18 +26,40 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const res = await api.get("/tasks");
-        const tasks = res.data;
+        const allTasks = res.data;
+        setTasks(allTasks);
 
         const now = new Date();
-        const pending = tasks.filter(t => t.status === "Pending").length;
-        const inProgress = tasks.filter(t => t.status === "In Progress").length;
-        const completed = tasks.filter(t => t.status === "Completed").length;
-        const overdue = tasks.filter(
+        const pending = allTasks.filter(t => t.status === "Pending").length;
+        const inProgress = allTasks.filter(t => t.status === "In Progress").length;
+        const completed = allTasks.filter(t => t.status === "Completed").length;
+        const overdue = allTasks.filter(
           t => t.dueDate && new Date(t.dueDate) < now && t.status !== "Completed"
         ).length;
 
-        setStats({ total: tasks.length, pending, inProgress, completed, overdue });
-        setRecentTasks(tasks.slice(-5).reverse());
+        const upcoming = [...allTasks]
+          .filter(t => t.dueDate && t.status !== "Completed")
+          .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+          .slice(0, 5);
+
+        const history = {};
+        allTasks.forEach(t => {
+          if (t.status === "Completed" && t.updatedAt) {
+            const date = new Date(t.updatedAt).toISOString().split("T")[0];
+            history[date] = (history[date] || 0) + 1;
+          }
+        });
+
+        const last7Days = [...Array(7)].map((_, i) => {
+          const d = new Date();
+          d.setDate(d.getDate() - (6 - i));
+          const key = d.toISOString().split("T")[0];
+          return { date: key, completed: history[key] || 0 };
+        });
+
+        setStats({ total: allTasks.length, pending, inProgress, completed, overdue });
+        setUpcomingTasks(upcoming);
+        setTaskHistory(last7Days);
       } catch (err) {
         console.error("Error fetching tasks", err);
       } finally {
@@ -91,11 +116,14 @@ export default function Dashboard() {
 
       <DashboardActions />
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <DashboardPieChart stats={stats} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <UpcomingTasksTable tasks={upcomingTasks} getStatusBadgeClass={getStatusBadgeClass} />
+        <ProductivityTrend taskHistory={taskHistory} />
       </div>
 
-      <RecentTasksTable recentTasks={recentTasks} getStatusBadgeClass={getStatusBadgeClass} />
+      <div className="mt-6">
+        <DashboardCalendar tasks={tasks} />
+      </div>
     </div>
   );
 }
