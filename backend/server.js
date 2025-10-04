@@ -27,6 +27,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined', { stream: accessLogStream }));
 }
 
+app.use('/', require('./routes/root'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
 
