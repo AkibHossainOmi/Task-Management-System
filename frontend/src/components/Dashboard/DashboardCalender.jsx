@@ -95,24 +95,24 @@ export default function DashboardCalendar({ tasks }) {
         })}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 mt-4 sm:mt-6 pt-2 border-t border-gray-100">
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-green-800 rounded"></div>
-          <span className="text-xs sm:text-sm text-gray-600">Task completion</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-red-200 rounded"></div>
-          <span className="text-xs sm:text-sm text-gray-600">Due Task</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-yellow-200 rounded"></div>
-          <span className="text-xs sm:text-sm text-gray-600">Future Task</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <span className="text-xs sm:text-sm text-gray-600">Today</span>
-        </div>
-      </div>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start space-y-2 sm:space-y-0 sm:space-x-6 mt-4 sm:mt-6 pt-2 border-t border-gray-100">
+    <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-green-800 rounded"></div>
+        <span className="text-xs sm:text-sm text-gray-600">Task completion</span>
+    </div>
+    <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-red-200 rounded"></div>
+        <span className="text-xs sm:text-sm text-gray-600">Due Task</span>
+    </div>
+    <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-yellow-200 rounded"></div>
+        <span className="text-xs sm:text-sm text-gray-600">Future Task</span>
+    </div>
+    <div className="flex items-center space-x-2">
+        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+        <span className="text-xs sm:text-sm text-gray-600">Today</span>
+    </div>
+    </div>
     </div>
   );
 }

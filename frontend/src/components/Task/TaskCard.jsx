@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, Clock, Flag, Folder, Edit3 } from "lucide-react";
+import { Calendar, Clock, Flag, Folder, Edit3, User } from "lucide-react";
 import TaskForm from "../../components/Task/TaskForm";
 
 export default function TaskCard({ task, onTaskUpdated }) {
@@ -15,14 +15,17 @@ export default function TaskCard({ task, onTaskUpdated }) {
   const priorityMap = { high: "text-red-500", medium: "text-amber-500", low: "text-green-500" };
   const colorMap = { blue: "bg-blue-100 text-blue-600", green: "bg-green-100 text-green-600", amber: "bg-amber-100 text-amber-600", red: "bg-red-100 text-red-600" };
 
-  const formatDate = (d) => !d ? "Not set" : new Date(d).toDateString() === new Date().toDateString() 
-    ? `Today, ${new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` 
-    : new Date(d).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const formatDate = (d) => !d
+    ? "Not set"
+    : new Date(d).toDateString() === new Date().toDateString()
+      ? `Today, ${new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+      : new Date(d).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
   const infoFields = [
     { icon: <Calendar className="w-5 h-5" />, title: "Due Date", value: formatDate(task.dueDate), overdue: task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "Completed" },
     { icon: <Clock className="w-5 h-5" />, title: "Created", value: formatDate(task.createdAt), color: "green" },
     { icon: <Edit3 className="w-5 h-5" />, title: "Last Updated", value: formatDate(task.updatedAt), color: "amber" },
+    { icon: <User className="w-5 h-5" />, title: "Assigned To", value: task.assignedUser?.name || "Unassigned", color: "blue" },
   ];
 
   return (
@@ -33,11 +36,23 @@ export default function TaskCard({ task, onTaskUpdated }) {
             <h2 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{task.title}</h2>
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${statusMap[task.status] || "text-gray-700 bg-gray-50 border-gray-200"}`}>{task.status}</span>
-              {task.priority && <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-200"><Flag className={`w-4 h-4 ${priorityMap[task.priority?.toLowerCase()] || "text-gray-400"}`} /><span className="text-sm font-medium text-gray-700 capitalize">{task.priority}</span></div>}
-              {task.category && <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-200"><Folder className="w-4 h-4 text-gray-500" /><span className="text-sm font-medium text-gray-700">{task.category}</span></div>}
+              {task.priority && (
+                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-200">
+                  <Flag className={`w-4 h-4 ${priorityMap[task.priority?.toLowerCase()] || "text-gray-400"}`} />
+                  <span className="text-sm font-medium text-gray-700 capitalize">{task.priority}</span>
+                </div>
+              )}
+              {task.category && (
+                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-200">
+                  <Folder className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">{task.category}</span>
+                </div>
+              )}
             </div>
           </div>
-          <button onClick={() => setIsEditing(true)} className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors"><Edit3 className="w-5 h-5 text-gray-600" /></button>
+          <button onClick={() => setIsEditing(true)} className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors">
+            <Edit3 className="w-5 h-5 text-gray-600" />
+          </button>
         </div>
 
         <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
@@ -47,7 +62,9 @@ export default function TaskCard({ task, onTaskUpdated }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
           {infoFields.map((f, i) => (
             <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-200">
-              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${f.overdue ? colorMap.red : colorMap[f.color || "blue"]}`}>{f.icon}</div>
+              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${f.overdue ? colorMap.red : colorMap[f.color || "blue"]}`}>
+                {f.icon}
+              </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-500">{f.title}</p>
                 <p className={`text-base font-semibold truncate ${f.overdue ? "text-red-600" : "text-gray-900"}`}>{f.value}</p>

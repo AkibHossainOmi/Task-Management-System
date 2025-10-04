@@ -1,19 +1,30 @@
-import TaskFilter from "../../components/Task/TaskFilter";
-import TaskList from "../../components/Task/TaskList";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import api from "../../api/api";
+import TaskCard from "../../components/Task/TaskCard";
 
-export default function TaskListPage() {
-  const [filters, setFilters] = useState({});
+export default function Task() {
+  const { id } = useParams();
+  const [task, setTask] = useState(null);
+
+  const fetchTask = useCallback(async () => {
+    try {
+      const res = await api.get(`/tasks/${id}`);
+      setTask(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchTask();
+  }, [fetchTask]);
+
+  if (!task) return <p className="text-center mt-6">Loading...</p>;
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
-      <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow space-y-6">
-        <h2 className="text-2xl font-semibold mb-4">Manage Tasks</h2>
-        
-        <TaskFilter onFilter={(f) => setFilters(f)} />
-        
-        <TaskList filters={filters} />
-      </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <TaskCard task={task} onTaskUpdated={fetchTask} />
     </div>
   );
 }
