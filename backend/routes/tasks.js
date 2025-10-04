@@ -16,7 +16,7 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   try {
-    const { status, search, startDate, endDate } = req.query;
+    const { status, search, startDate, endDate, page, limit } = req.query;
     const q = {};
 
     if (status) q.status = status;
@@ -28,12 +28,29 @@ router.get('/', auth, async (req, res) => {
       if (endDate) q.dueDate.$lte = new Date(endDate);
     }
 
+    if (page && limit) {
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const [tasks, total] = await Promise.all([
+        Task.find(q)
+          .populate('assignedUser', 'name email')
+          .sort({ dueDate: -1, createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit)),
+        Task.countDocuments(q),
+      ]);
+
+      return res.json({
+        tasks,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / limit),
+        totalTasks: total,
+      });
+    }
+
     const tasks = await Task.find(q)
       .populate('assignedUser', 'name email')
-      .sort({ 
-        dueDate: -1,
-        createdAt: -1
-      });
+      .sort({ dueDate: -1, createdAt: -1 });
 
     res.json(tasks);
   } catch (err) {

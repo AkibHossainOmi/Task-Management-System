@@ -6,22 +6,27 @@ import TaskForm from "../Task/TaskForm";
 export default function TaskList({ filters, refreshTasks }) {
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await api.get("/tasks", { params: filters });
-      setTasks(res.data);
+      const res = await api.get("/tasks", {
+        params: { ...filters, page, limit: 10 },
+      });
+      setTasks(res.data.tasks);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
-  }, [filters]);
+  }, [filters, page]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
     try {
       await api.delete(`/tasks/${id}`);
-      setTasks((prev) => prev.filter((task) => task._id !== id));
+      fetchTasks();
     } catch (err) {
       console.error("Error deleting task:", err);
     }
@@ -105,6 +110,40 @@ export default function TaskList({ filters, refreshTasks }) {
             )}
           </tbody>
         </table>
+
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage(1)}
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+          >
+            First
+          </button>
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-3 py-1 rounded bg-gray-100">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+          >
+            Next
+          </button>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage(totalPages)}
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+          >
+            Last
+          </button>
+        </div>
       </div>
     </>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import api from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
@@ -6,6 +7,7 @@ import { useAuth } from "../../contexts/authContext";
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -15,9 +17,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", form);
-
       login(res.data.token, res.data.user);
-
       navigate("/dashboard");
     } catch (err) {
       setMessage({
@@ -68,19 +68,26 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-gray-700 text-sm mb-1" htmlFor="password">
               Password
             </label>
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="********"
               onChange={handleChange}
               required
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="border border-gray-300 p-2 rounded w-full pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-9 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
         </div>
 
