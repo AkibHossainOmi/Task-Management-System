@@ -1,10 +1,22 @@
-import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameDay, isToday } from "date-fns";
+import { useState } from "react";
+import {
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  format,
+  isSameDay,
+  isToday,
+  addMonths,
+  subMonths
+} from "date-fns";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function DashboardCalendar({ tasks }) {
-  const now = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   const days = eachDayOfInterval({
-    start: startOfMonth(now),
-    end: endOfMonth(now),
+    start: startOfMonth(currentMonth),
+    end: endOfMonth(currentMonth),
   });
 
   const getCompletionRatio = (dayTasks) => {
@@ -13,13 +25,26 @@ export default function DashboardCalendar({ tasks }) {
     return completedCount / dayTasks.length;
   };
 
+  const goPrevMonth = () => setCurrentMonth(prev => subMonths(prev, 1));
+  const goNextMonth = () => setCurrentMonth(prev => addMonths(prev, 1));
+
   return (
     <div className="bg-white rounded-2xl shadow border border-gray-100 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-4 sm:mb-6">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Daily Task Status</h2>
-        <span className="text-sm sm:text-base font-medium text-gray-500 mt-1 sm:mt-0">
-          {format(now, "MMMM yyyy")}
-        </span>
+        <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+          <FaChevronLeft
+            onClick={goPrevMonth}
+            className="cursor-pointer text-gray-500 hover:text-gray-700 transition"
+            size={18}
+          />
+          <span className="text-sm sm:text-base font-medium text-gray-500">{format(currentMonth, "MMMM yyyy")}</span>
+          <FaChevronRight
+            onClick={goNextMonth}
+            className="cursor-pointer text-gray-500 hover:text-gray-700 transition"
+            size={18}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-2 sm:mb-3">
@@ -35,16 +60,14 @@ export default function DashboardCalendar({ tasks }) {
           const dayTasks = tasks.filter(t => t.dueDate && isSameDay(new Date(t.dueDate), day));
           const isCurrentDay = isToday(day);
           const completionRatio = getCompletionRatio(dayTasks);
-          const hasDueTasks = dayTasks.some(t => t.status !== "Completed");
-          const hasFutureTasks = dayTasks.some(t => new Date(t.dueDate) > now && t.status !== "Completed");
+          const hasDueTasks = dayTasks.some(t => t.status !== "Completed" && new Date(t.dueDate) <= new Date());
+          const hasFutureTasks = dayTasks.some(t => t.status !== "Completed" && new Date(t.dueDate) > new Date());
 
-          // Day background
           let bgClass = "bg-white border border-gray-100";
           if (dayTasks.length) {
             if (completionRatio === 1) bgClass = "bg-green-100 border border-green-200";
-            else if (hasDueTasks && day < now) bgClass = "bg-red-50 border border-red-200";
+            else if (hasDueTasks) bgClass = "bg-red-50 border border-red-200";
             else if (hasFutureTasks) bgClass = "bg-yellow-100 border border-yellow-200";
-            else bgClass = "bg-gradient-to-r from-green-100 via-yellow-100 to-red-100 border border-gray-200";
           }
 
           return (
@@ -53,9 +76,7 @@ export default function DashboardCalendar({ tasks }) {
               className={`relative p-2 sm:p-3 rounded-xl transition-all duration-200 hover:shadow-md hover:scale-105 ${bgClass} ${isCurrentDay ? "ring-2 ring-blue-500 ring-opacity-50" : ""} ${dayTasks.length ? "cursor-pointer" : ""}`}
               title={dayTasks.length ? `${dayTasks.filter(t => t.status === "Completed").length} of ${dayTasks.length} tasks completed` : "No tasks"}
             >
-              <div
-                className={`text-center font-medium text-sm ${isCurrentDay ? "text-blue-600 font-semibold" : "text-gray-700"} ${dayTasks.length === 0 ? "text-gray-400" : ""}`}
-              >
+              <div className={`text-center font-medium text-sm ${isCurrentDay ? "text-blue-600 font-semibold" : "text-gray-700"} ${dayTasks.length === 0 ? "text-gray-400" : ""}`}>
                 {format(day, "d")}
               </div>
 
